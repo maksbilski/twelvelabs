@@ -36,6 +36,30 @@ Aplikacja do **real-time transkrypcji głosu** z React (frontend) i FastAPI (bac
 
 ## 🚀 Instalacja
 
+### Opcja A: Docker (Zalecane dla produkcji) 🐳
+
+Najszybszy sposób - wszystko w jednym kontenerze!
+
+```bash
+# 1. Utwórz plik .env z kluczami API
+cp env.example .env
+nano .env  # wpisz swoje klucze
+
+# 2. Uruchom w Docker
+docker-compose up --build
+
+# 3. Otwórz przeglądarkę
+# http://localhost
+```
+
+✅ **Gotowe!** Frontend + Backend działają na porcie 80.
+
+Szczegóły: Zobacz [DOCKER_DEPLOYMENT.md](./DOCKER_DEPLOYMENT.md)
+
+---
+
+### Opcja B: Lokalna instalacja (Development)
+
 ### 1. Klucze API
 
 Utwórz plik `.env` w głównym katalogu projektu:
