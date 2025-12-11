@@ -1,0 +1,362 @@
+/* ConversationAgent - ElevenLabs Voice Agent Styles */
+
+.conversation-agent {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 500px;
+  max-height: 70vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: white;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Header */
+.agent-header {
+  padding: 1.5rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.agent-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.agent-header .agent-subtitle {
+  margin: 0.3rem 0 0 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
+}
+
+.agent-status-bar {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.agent-status-badge {
+  padding: 0.4rem 1.2rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.agent-status-badge.connecting {
+  background: rgba(255, 193, 7, 0.2);
+  border-color: rgba(255, 193, 7, 0.5);
+  color: #ffc107;
+}
+
+.agent-status-badge.connected,
+.agent-status-badge.active {
+  background: rgba(76, 175, 80, 0.2);
+  border-color: rgba(76, 175, 80, 0.5);
+  color: #4caf50;
+}
+
+.agent-status-badge.error {
+  background: rgba(244, 67, 54, 0.2);
+  border-color: rgba(244, 67, 54, 0.5);
+  color: #f44336;
+}
+
+.agent-status-badge.disconnected {
+  background: rgba(158, 158, 158, 0.2);
+  border-color: rgba(158, 158, 158, 0.5);
+  color: #9e9e9e;
+}
+
+/* Content area */
+.agent-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  position: relative;
+  overflow-y: auto;
+}
+
+/* Loading state */
+.agent-loading {
+  text-align: center;
+}
+
+.agent-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #00d4ff;
+  border-radius: 50%;
+  animation: agent-spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes agent-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.agent-loading p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  margin: 0.5rem 0;
+}
+
+.agent-loading .agent-tip {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+}
+
+/* Error state */
+.agent-error-message {
+  text-align: center;
+  padding: 1.5rem;
+  background: rgba(244, 67, 54, 0.1);
+  border: 2px solid rgba(244, 67, 54, 0.3);
+  border-radius: 12px;
+  max-width: 400px;
+}
+
+.agent-error-message h3 {
+  color: #f44336;
+  margin-top: 0;
+  font-size: 1.2rem;
+}
+
+.agent-error-message p {
+  color: rgba(255, 255, 255, 0.8);
+  margin: 1rem 0;
+}
+
+.agent-retry-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.agent-retry-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Active conversation */
+.agent-conversation-active {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.agent-participant {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+}
+
+.agent-participant.speaking {
+  background: rgba(102, 126, 234, 0.1);
+  border-color: rgba(102, 126, 234, 0.5);
+  box-shadow: 0 0 30px rgba(102, 126, 234, 0.3);
+  animation: agent-pulse-border 1.5s ease-in-out infinite;
+}
+
+@keyframes agent-pulse-border {
+  0%, 100% {
+    border-color: rgba(102, 126, 234, 0.5);
+  }
+  50% {
+    border-color: rgba(102, 126, 234, 0.8);
+  }
+}
+
+.agent-avatar {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.agent-participant-info {
+  flex: 1;
+}
+
+.agent-participant-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.agent-participant-state {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+}
+
+/* Wave animation divider */
+.agent-divider {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.agent-wave-container {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.agent-wave {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.agent-wave::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 50%;
+  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.8), transparent);
+  animation: agent-wave-move 2s linear infinite;
+}
+
+.agent-speaking-wave::after {
+  background: linear-gradient(90deg, transparent, rgba(76, 175, 80, 0.8), transparent);
+}
+
+.user-speaking-wave::after {
+  background: linear-gradient(90deg, transparent, rgba(33, 150, 243, 0.8), transparent);
+}
+
+.idle-wave::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: agent-wave-move 4s linear infinite;
+}
+
+@keyframes agent-wave-move {
+  0% {
+    left: -50%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Disconnected state */
+.agent-disconnected {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Footer */
+.agent-footer {
+  padding: 1.5rem;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.agent-footer-info {
+  margin: 0 0 1rem 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
+}
+
+.agent-end-button {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+}
+
+.agent-end-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+}
+
+.agent-end-button:active {
+  transform: translateY(0);
+}
+
+.agent-end-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .conversation-agent {
+    min-height: 400px;
+  }
+
+  .agent-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .agent-content {
+    padding: 1rem;
+  }
+
+  .agent-participant {
+    padding: 1rem;
+    gap: 0.8rem;
+  }
+
+  .agent-avatar {
+    width: 50px;
+    height: 50px;
+    font-size: 1.8rem;
+  }
+
+  .agent-participant-name {
+    font-size: 1rem;
+  }
+
+  .agent-end-button {
+    padding: 0.7rem 1.5rem;
+    font-size: 0.95rem;
+  }
+}

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test ElevenLabs Agent Configuration</title>
+  <style>
+    body {
+      font-family: 'Courier New', monospace;
+      max-width: 900px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #1a1a2e;
+      color: #fff;
+    }
+    h1 { color: #00d4ff; }
+    .test-section {
+      background: rgba(255,255,255,0.05);
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 10px 5px;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+    .output {
+      background: #000;
+      padding: 15px;
+      border-radius: 5px;
+      margin-top: 10px;
+      font-size: 14px;
+      white-space: pre-wrap;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .success { color: #4caf50; }
+    .error { color: #f44336; }
+    .warning { color: #ffc107; }
+    .info { color: #00d4ff; }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 5px;
+      color: white;
+      font-family: 'Courier New', monospace;
+    }
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎙️ ElevenLabs Agent Configuration Test</h1>
+  <p>Test your agent configuration with dynamic variables</p>
+
+  <div class="test-section">
+    <h3>📝 Test Configuration</h3>
+    
+    <label>Agent ID:</label>
+    <input type="text" id="agentId" value="agent_4401kc79jma5e189ep8as6wm64mp" />
+    
+    <label>First Prompt (what agent should say):</label>
+    <textarea id="firstPrompt">Alert: This is a test emergency message. Please respond.</textarea>
+    
+    <label>Transcript Analysis (context for agent):</label>
+    <textarea id="transcriptAnalysis">COCKPIT TRANSCRIPT:
+Test communication between ATC and aircraft.
+
+SAFETY ANALYSIS:
+This is a test scenario to verify dynamic variables are working correctly.</textarea>
+    
+    <button onclick="testAgent()">🚀 Test Agent Connection</button>
+    <button onclick="clearOutput()">🗑️ Clear Output</button>
+  </div>
+
+  <div class="test-section">
+    <h3>📊 Test Output</h3>
+    <div id="output" class="output">Click "Test Agent Connection" to start...</div>
+  </div>
+
+  <div class="test-section">
+    <h3>✅ What Should Happen</h3>
+    <ol>
+      <li>Agent connects (status: Active)</li>
+      <li>Agent <strong>immediately says</strong> the "First Prompt" text above</li>
+      <li>Agent waits for your response</li>
+      <li>You can speak and have a conversation</li>
+    </ol>
+    
+    <h3>❌ Common Issues</h3>
+    <ul>
+      <li><strong>Agent says "Hello" instead:</strong> First Message in Dashboard not set to <code>{{'{{'}}first_prompt{{'}}'}}</code></li>
+      <li><strong>Agent doesn't connect:</strong> Check browser microphone permissions</li>
+      <li><strong>Variables not working:</strong> Check variable names are exactly: <code>transcript_analysis</code> and <code>first_prompt</code></li>
+    </ul>
+  </div>
+
+  <script type="module">
+    import { Conversation } from 'https://cdn.jsdelivr.net/npm/@elevenlabs/client@0.12.1/+esm';
+    
+    window.Conversation = Conversation;
+    
+    window.testAgent = async function() {
+      const output = document.getElementById('output');
+      const agentId = document.getElementById('agentId').value;
+      const firstPrompt = document.getElementById('firstPrompt').value;
+      const transcriptAnalysis = document.getElementById('transcriptAnalysis').value;
+      
+      function log(msg, type = 'info') {
+        const colors = {
+          success: '#4caf50',
+          error: '#f44336',
+          warning: '#ffc107',
+          info: '#00d4ff'
+        };
+        output.innerHTML += `<span style="color: ${colors[type]}">${msg}</span>\n`;
+        output.scrollTop = output.scrollHeight;
+      }
+      
+      output.innerHTML = '';
+      log('🚀 Starting test...', 'info');
+      log('📋 Agent ID: ' + agentId, 'info');
+      log('📢 First Prompt: ' + firstPrompt.substring(0, 50) + '...', 'info');
+      log('', 'info');
+      
+      try {
+        const dynamicVars = {
+          transcript_analysis: transcriptAnalysis,
+          first_prompt: firstPrompt
+        };
+        
+        log('🔑 Dynamic Variables:', 'info');
+        log(JSON.stringify(dynamicVars, null, 2), 'info');
+        log('', 'info');
+        
+        log('📞 Connecting to agent...', 'warning');
+        
+        const conv = await Conversation.startSession({
+          agentId: agentId,
+          connectionType: 'websocket',
+          dynamicVariables: dynamicVars,
+          
+          onConnect: () => {
+            log('✅ CONNECTED to agent!', 'success');
+            log('⚠️ Agent should now say the first_prompt automatically', 'warning');
+            log('', 'info');
+            log('👂 Listen to what the agent says...', 'info');
+            log('📝 If agent says generic greeting instead of first_prompt:', 'warning');
+            log('   → Go to ElevenLabs Dashboard', 'warning');
+            log('   → Settings → First Message', 'warning');
+            log('   → Set to: {{first_prompt}}', 'warning');
+          },
+          
+          onDisconnect: (reason) => {
+            log('❌ Disconnected: ' + reason, 'error');
+          },
+          
+          onError: (error) => {
+            log('❌ ERROR: ' + error.message, 'error');
+          },
+          
+          onModeChange: (mode) => {
+            log('🔄 Mode: ' + mode.mode, 'info');
+          },
+          
+          onMessage: (message) => {
+            log('💬 Message: ' + JSON.stringify(message), 'info');
+          }
+        });
+        
+        window.currentConversation = conv;
+        log('', 'info');
+        log('✅ Conversation object created', 'success');
+        log('💡 To end: window.currentConversation.endSession()', 'info');
+        
+      } catch (error) {
+        log('❌ FAILED: ' + error.message, 'error');
+        log('Stack: ' + error.stack, 'error');
+      }
+    };
+    
+    window.clearOutput = function() {
+      document.getElementById('output').innerHTML = 'Output cleared...';
+    };
+  </script>
+</body>
+</html>

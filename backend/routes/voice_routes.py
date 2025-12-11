@@ -104,6 +104,31 @@ async def check_cockpit_conversation(request: AnalyzeRequest):
     return response
 
 
+@router.post("/parse-transcript")
+async def parse_transcript(request: AnalyzeRequest):
+    """
+    Parse transcript to identify speakers (ATC vs Aircraft)
+    
+    Args:
+        request: {"transcript": "conversation text"}
+        
+    Returns:
+        {"messages": [{"speaker": "ATC/Aircraft", "text": "..."}], "success": true}
+    """
+    try:
+        messages = voice_service.parse_transcript(request.transcript)
+        return {
+            "messages": messages,
+            "success": True
+        }
+    except Exception as e:
+        return {
+            "messages": [],
+            "error": str(e),
+            "success": False
+        }
+
+
 @router.get("/health")
 async def health_check():
     """

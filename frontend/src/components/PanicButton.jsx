@@ -49,7 +49,7 @@ export function PanicButton({ visible, onClick, emergencyData }) {
         
         {/* Action Button */}
         <button className="panic-button-dismiss" onClick={onClick}>
-          Acknowledge & Dismiss
+          🎙️ Talk to Safety Officer
         </button>
         
         {/* Fallback if no emergency data */}

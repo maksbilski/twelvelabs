@@ -3,7 +3,9 @@ Voice Service - ElevenLabs integration for real-time transcription + Gemini anal
 """
 import os
 import httpx
+import re
 from dotenv import load_dotenv
+from typing import List, Dict
 import google.generativeai as genai
 
 load_dotenv()
@@ -20,6 +22,66 @@ class VoiceService:
         if GEMINI_API_KEY:
             genai.configure(api_key=GEMINI_API_KEY)
             self.gemini_model = genai.GenerativeModel('gemini-2.0-flash-exp')
+    
+    def parse_transcript(self, transcript: str) -> List[Dict[str, str]]:
+        """
+        Parse transcript to identify speakers (ATC vs Aircraft)
+        
+        Aviation radio protocol:
+        - ATC speaks first, addressing aircraft: "Coastal 115, line up and wait..."
+        - Aircraft responds, ending with callsign: "Line up and wait, Coastal 115"
+        
+        Args:
+            transcript: Raw transcript text
+            
+        Returns:
+            List of messages: [{"speaker": "ATC/Aircraft", "callsign": "...", "text": "..."}]
+        """
+        if not transcript or len(transcript.strip()) < 5:
+            return []
+        
+        # Split by sentence endings or natural pauses
+        sentences = re.split(r'[.!?]\s+|\n', transcript)
+        messages = []
+        
+        for sentence in sentences:
+            sentence = sentence.strip()
+            if not sentence or len(sentence) < 5:
+                continue
+            
+            # Common callsign patterns (letters + numbers)
+            # Examples: "Coastal 115", "United 234", "Delta 456", "N12345"
+            callsign_pattern = r'\b([A-Z][a-z]+\s+\d+[A-Za-z]*|[A-Z]{2,}\s+\d+|N\d{3,}[A-Z]*)\b'
+            
+            # Check if sentence STARTS with callsign (ATC speaking)
+            start_match = re.match(r'^' + callsign_pattern, sentence)
+            
+            # Check if sentence ENDS with callsign (Aircraft speaking)
+            end_match = re.search(callsign_pattern + r'[,.]?\s*$', sentence)
+            
+            if start_match:
+                # ATC speaking TO aircraft
+                callsign = start_match.group(1)
+                messages.append({
+                    "speaker": "ATC",
+                    "target_callsign": callsign,
+                    "text": sentence
+                })
+            elif end_match:
+                # Aircraft speaking, confirms with callsign at end
+                callsign = end_match.group(1)
+                messages.append({
+                    "speaker": callsign,
+                    "text": sentence
+                })
+            else:
+                # Unknown speaker - could be pilot conversation in cockpit
+                messages.append({
+                    "speaker": "Unknown",
+                    "text": sentence
+                })
+        
+        return messages
     
     async def get_elevenlabs_token(self) -> dict:
         """
@@ -260,6 +322,13 @@ Cockpit conversation: {transcript}"""
             system_prompt = f"""You are an expert aviation safety advisor monitoring cockpit communications and ATC interactions.
 {callsign_context}
 Your role is to detect safety-critical situations that pilots may have missed or not fully appreciated.
+
+UNDERSTANDING AVIATION RADIO PROTOCOL:
+- When ATC speaks: They START with the aircraft callsign they're addressing
+  Example: "Coastal 115, line up and wait runway 28"
+- When Aircraft responds: They END with their own callsign
+  Example: "Line up and wait runway 28, Coastal 115"
+- Cockpit crew conversations: Usually no callsign mentioned, internal discussion
 
 IMPORTANT: "Line up and wait" on a runway is a NORMAL procedure. It only becomes a safety issue if:
 - Another aircraft is ALSO cleared to land/takeoff on the SAME runway
