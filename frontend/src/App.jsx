@@ -11,6 +11,7 @@ function App() {
   const [emergencyData, setEmergencyData] = useState(null)
   const [aircraftCallsign, setAircraftCallsign] = useState('')
   const [showAgentModal, setShowAgentModal] = useState(false)
+  const [stopRecording, setStopRecording] = useState(false) // Signal to stop VoiceRecorder
   
   // Debounce timer for parse-transcript to avoid spam
   const parseTimerRef = useRef(null)
@@ -71,7 +72,11 @@ function App() {
     console.log('📝 [App] Current transcript:', transcript);
     console.log('📋 [App] Emergency data:', emergencyData);
     
-    // Open agent modal instead of dismissing
+    // Stop VoiceRecorder before opening agent modal (to avoid mic conflict)
+    console.log('🛑 [App] Stopping VoiceRecorder...');
+    setStopRecording(true)
+    
+    // Open agent modal
     setShowAgentModal(true)
     
     // Optionally hide panic button while modal is open
@@ -83,6 +88,9 @@ function App() {
     
     // Close modal
     setShowAgentModal(false)
+    
+    // Re-enable VoiceRecorder
+    setStopRecording(false)
     
     // Hide panic button after conversation ends
     setShowPanicButton(false)
@@ -161,6 +169,7 @@ function App() {
         onTranscriptUpdate={handleTranscriptUpdate}
         onAnalysisUpdate={handleAnalysisUpdate}
         aircraftCallsign={aircraftCallsign}
+        stopRecording={stopRecording}
       />
 
       {/* 🆕 Voice Agent Modal - ElevenLabs conversational agent */}

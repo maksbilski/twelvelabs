@@ -63,9 +63,12 @@ function ConversationAgent({ transcriptAnalysis, firstPrompt, onEnd }) {
       };
       
       console.log('🔑 [ConversationAgent] Dynamic Variables FULL:');
-      console.log('  📋 transcript_analysis:', dynamicVars.transcript_analysis);
+      console.log('  📋 transcript_analysis:', dynamicVars.transcript_analysis.substring(0, 200));
       console.log('  📢 first_prompt:', dynamicVars.first_prompt);
-      console.log('  🔍 Variables prepared for agent:', JSON.stringify(dynamicVars, null, 2));
+
+      console.log('');
+      console.log('🔌 [ConversationAgent] Attempting to connect...');
+      console.log('⏳ [ConversationAgent] This may take a few seconds...');
 
       // Initialize conversation with ElevenLabs agent
       const conv = await Conversation.startSession({
@@ -96,6 +99,22 @@ function ConversationAgent({ transcriptAnalysis, firstPrompt, onEnd }) {
           console.log('   1. Dynamic variables exist: transcript_analysis, first_prompt');
           console.log('   2. First Message is set to: {{first_prompt}}');
           console.log('   3. System Prompt uses: {{transcript_analysis}}');
+          console.log('');
+          console.log('⏳ [ConversationAgent] Waiting for agent to speak...');
+          console.log('💡 [ConversationAgent] If agent doesnt speak in 3 seconds, check Dashboard First Message config');
+          
+          // Timeout to check if agent started speaking
+          setTimeout(() => {
+            console.log('');
+            console.log('⏰ [ConversationAgent] 3 seconds passed');
+            console.log('❓ [ConversationAgent] Did agent speak? Check mode changes above');
+            console.log('');
+            console.log('🔍 [ConversationAgent] Debugging info:');
+            console.log('   - If NO mode change to "speaking" → First Message not configured');
+            console.log('   - If mode changed but no audio → Audio/microphone issue');
+            console.log('   - Check ElevenLabs Dashboard → Agent Settings → First Message');
+            console.log('   - Should be EXACTLY: {{first_prompt}} (with double braces)');
+          }, 3000);
         },
 
         onDisconnect: (reason) => {
@@ -121,23 +140,36 @@ function ConversationAgent({ transcriptAnalysis, firstPrompt, onEnd }) {
 
         onModeChange: (mode) => {
           console.log('🔄 [ConversationAgent] Mode changed to:', mode);
+          console.log('   Mode details:', JSON.stringify(mode, null, 2));
 
           // mode.mode can be: 'speaking', 'listening', 'thinking', etc.
           if (mode.mode === 'speaking') {
+            console.log('🗣️ [ConversationAgent] AGENT IS SPEAKING!');
             setIsAgentSpeaking(true);
             setIsUserSpeaking(false);
           } else if (mode.mode === 'listening') {
+            console.log('👂 [ConversationAgent] AGENT IS LISTENING');
             setIsAgentSpeaking(false);
             setIsUserSpeaking(true);
           }
         },
 
         onMessage: (message) => {
-          console.log('💬 [ConversationAgent] Message:', message);
+          console.log('💬 [ConversationAgent] Message received:', message);
+          console.log('   Message type:', message?.type);
+          console.log('   Message content:', JSON.stringify(message, null, 2));
+        },
+        
+        onVolumeUpdate: (volume) => {
+          // Log volume to see if audio is being produced
+          if (volume > 0.1) {
+            console.log('🔊 [ConversationAgent] Audio volume:', volume);
+          }
         }
       });
 
-      console.log('✅ [ConversationAgent] Conversation initialized!');
+      console.log('✅ [ConversationAgent] Conversation object created');
+      console.log('🔗 [ConversationAgent] Waiting for onConnect callback...');
 
       conversationRef.current = conv;
       setConversation(conv);
@@ -145,13 +177,21 @@ function ConversationAgent({ transcriptAnalysis, firstPrompt, onEnd }) {
 
     } catch (err) {
       console.error('❌ [ConversationAgent] Failed to start conversation:', err);
-      console.error('Full error object:', {
-        message: err.message,
-        name: err.name,
-        stack: err.stack,
-        raw: err
-      });
-      setError(err.message || 'Failed to connect to agent');
+      console.error('❌ Error type:', err.constructor.name);
+      console.error('❌ Error message:', err.message);
+      console.error('❌ Error stack:', err.stack);
+      
+      // Check for common errors
+      if (err.message?.includes('microphone')) {
+        setError('Microphone permission denied. Please allow microphone access.');
+      } else if (err.message?.includes('network') || err.message?.includes('fetch')) {
+        setError('Network error. Check internet connection or ElevenLabs API status.');
+      } else if (err.message?.includes('agent')) {
+        setError(`Agent error: ${err.message}. Check agent ID in Dashboard.`);
+      } else {
+        setError(err.message || 'Failed to connect to agent. Check console for details.');
+      }
+      
       setStatus('error');
     }
   };

@@ -6,7 +6,7 @@ import './VoiceRecorder.css';
  * Minimalistyczny komponent - tylko przycisk mikrofonu
  * Transkrypcja wyświetla się na głównym ekranie (App.jsx)
  */
-export function VoiceRecorder({ onTranscriptUpdate, onAnalysisUpdate, aircraftCallsign }) {
+export function VoiceRecorder({ onTranscriptUpdate, onAnalysisUpdate, aircraftCallsign, stopRecording }) {
   const {
     isListening,
     error,
@@ -14,7 +14,16 @@ export function VoiceRecorder({ onTranscriptUpdate, onAnalysisUpdate, aircraftCa
     committedTranscripts,
     fullTranscript,
     toggleListening,
+    stopListening,
   } = useRealtimeVoice(onAnalysisUpdate, aircraftCallsign);
+
+  // Stop recording when stopRecording prop becomes true
+  useEffect(() => {
+    if (stopRecording && isListening) {
+      console.log('🛑 [VoiceRecorder] Stopping on external signal...');
+      stopListening();
+    }
+  }, [stopRecording, isListening, stopListening]);
 
   // Update transcript w App.jsx przy każdej zmianie
   useEffect(() => {
