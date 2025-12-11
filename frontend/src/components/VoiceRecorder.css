@@ -1,0 +1,308 @@
+/* Voice Recorder Mini - Tylko przycisk */
+
+.voice-recorder-mini {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Panel z transkrypcją */
+.voice-panel {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 1.5rem;
+  width: 400px;
+  max-width: calc(100vw - 4rem);
+  max-height: 500px;
+  overflow-y: auto;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header panelu */
+.voice-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.voice-status {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.status-listening {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #ef4444;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.status-done {
+  color: #10b981;
+}
+
+/* Wave bars animation */
+.wave-bars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 16px;
+}
+
+.wave-bars span {
+  width: 3px;
+  height: 100%;
+  background: #ef4444;
+  border-radius: 2px;
+  animation: wave 1.2s ease-in-out infinite;
+}
+
+.wave-bars span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.wave-bars span:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.wave-bars span:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.wave-bars span:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+@keyframes wave {
+  0%, 100% {
+    transform: scaleY(0.3);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+/* Close button */
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.close-btn:hover {
+  background: #f3f4f6;
+  color: #1f2937;
+}
+
+/* Error message */
+.voice-error {
+  background: #fef2f2;
+  color: #991b1b;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  border: 1px solid #fecaca;
+}
+
+/* Transcript display */
+.voice-transcript {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #1f2937;
+  min-height: 3rem;
+  word-wrap: break-word;
+}
+
+.committed-text {
+  color: #111827;
+  font-weight: 500;
+}
+
+.partial-text {
+  color: #6b7280;
+  font-style: italic;
+}
+
+.typing-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.2em;
+  background: #3b82f6;
+  margin-left: 2px;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Hint */
+.voice-hint {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #f9fafb;
+  border-radius: 0.5rem;
+}
+
+/* Status indicator */
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: white;
+  padding: 0.75rem 1.25rem;
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.status-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #ef4444;
+}
+
+/* Error toast */
+.error-toast {
+  background: #fef2f2;
+  color: #991b1b;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-size: 0.875rem;
+  border: 2px solid #fecaca;
+  animation: slideUp 0.3s ease-out;
+}
+
+/* Główny przycisk mikrofonu - większy */
+.voice-btn-mini {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.voice-btn-mini:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.6);
+}
+
+.voice-btn-mini:active {
+  transform: translateY(0) scale(1);
+}
+
+/* Stan "listening" */
+.voice-btn-mini.listening {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+  animation: pulseButton 1.5s ease-in-out infinite;
+}
+
+@keyframes pulseButton {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 8px 28px rgba(239, 68, 68, 0.7);
+  }
+}
+
+.voice-btn-mini.listening:hover {
+  animation: none;
+  transform: translateY(-3px) scale(1.05);
+}
+
+/* Ikona mikrofonu */
+.mic-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .voice-recorder {
+    bottom: 1rem;
+    right: 1rem;
+  }
+  
+  .voice-panel {
+    width: calc(100vw - 2rem);
+    max-height: 60vh;
+  }
+  
+  .voice-btn {
+    width: 56px;
+    height: 56px;
+  }
+}
