@@ -10,6 +10,7 @@ router = APIRouter(prefix="/api/voice", tags=["voice"])
 
 class AnalyzeRequest(BaseModel):
     transcript: str
+    aircraft_callsign: str = None
 
 
 @router.get("/token")
@@ -59,6 +60,48 @@ async def analyze_transcript(request: AnalyzeRequest):
         "confidence": result["confidence"],
         "success": True
     }
+
+
+@router.post("/check-cockpit")
+async def check_cockpit_conversation(request: AnalyzeRequest):
+    """
+    Analyze cockpit conversation to determine if pilots need intervention.
+    Expert pilots advisor - detects if pilots missed important facts.
+    
+    Args:
+        request: {"transcript": "cockpit conversation text"}
+        
+    Returns:
+        If intervention needed:
+            {"needs_intervention": true, "summary": "...", "agent_message": "...", "success": true}
+        If no intervention:
+            {"needs_intervention": false, "success": true}
+    """
+    result = await voice_service.analyze_cockpit_conversation(
+        request.transcript, 
+        request.aircraft_callsign
+    )
+    
+    if result.get("error"):
+        # Return error but don't raise exception - frontend will handle
+        return {
+            "needs_intervention": False,
+            "error": result["error"],
+            "success": False
+        }
+    
+    # Build response - include summary and agent_message if intervention needed
+    response = {
+        "needs_intervention": result["needs_intervention"],
+        "success": True
+    }
+    
+    # Add emergency data if intervention is needed
+    if result.get("needs_intervention"):
+        response["summary"] = result.get("summary")
+        response["agent_message"] = result.get("agent_message")
+    
+    return response
 
 
 @router.get("/health")

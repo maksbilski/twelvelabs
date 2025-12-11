@@ -1,0 +1,336 @@
+/* Panic Button Container */
+.panic-button-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  animation: fadeInScale 0.3s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Panic Button Wrapper */
+.panic-button-wrapper {
+  background: rgba(0, 0, 0, 0.95);
+  border: 3px solid #dc2626;
+  border-radius: 20px;
+  padding: 40px 50px;
+  text-align: center;
+  box-shadow: 0 0 50px rgba(220, 38, 38, 0.5);
+  animation: pulse-glow 2s ease-in-out infinite;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 30px rgba(220, 38, 38, 0.4),
+                0 0 60px rgba(220, 38, 38, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 50px rgba(220, 38, 38, 0.8),
+                0 0 100px rgba(220, 38, 38, 0.4);
+  }
+}
+
+/* Large Icon Above Button */
+.panic-icon-large {
+  font-size: 80px;
+  margin-bottom: 20px;
+  animation: shake 0.5s ease-in-out infinite;
+}
+
+@keyframes shake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-10deg); }
+  75% { transform: rotate(10deg); }
+}
+
+/* Panic Button */
+.panic-button {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 20px 40px;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 0 8px 20px rgba(220, 38, 38, 0.5);
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.panic-button:hover {
+  background: linear-gradient(135deg, #b91c1c, #991b1b);
+  box-shadow: 0 12px 30px rgba(220, 38, 38, 0.7);
+  transform: translateY(-2px);
+}
+
+.panic-button:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.5);
+}
+
+/* Button Icon */
+.panic-icon {
+  font-size: 32px;
+  animation: pulse-icon 1s ease-in-out infinite;
+}
+
+@keyframes pulse-icon {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* Button Text */
+.panic-text {
+  font-family: 'Arial', sans-serif;
+  font-weight: 900;
+}
+
+/* Subtitle */
+.panic-subtitle {
+  color: #fca5a5;
+  font-size: 14px;
+  margin-top: 15px;
+  margin-bottom: 0;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .panic-button-wrapper {
+    padding: 30px 40px;
+  }
+  
+  .panic-icon-large {
+    font-size: 60px;
+  }
+  
+  .panic-button {
+    padding: 15px 30px;
+    font-size: 18px;
+  }
+  
+  .panic-icon {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .panic-button-wrapper {
+    padding: 20px 30px;
+  }
+  
+  .panic-icon-large {
+    font-size: 50px;
+  }
+  
+  .panic-button {
+    padding: 12px 24px;
+    font-size: 16px;
+    gap: 10px;
+  }
+  
+  .panic-icon {
+    font-size: 20px;
+  }
+  
+  .panic-text {
+    font-size: 14px;
+  }
+}
+
+/* ===== NEW STYLES FOR EMERGENCY INSTRUCTIONS ===== */
+
+/* Emergency Header */
+.emergency-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
+.emergency-title {
+  color: #dc2626;
+  font-size: 24px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0;
+  text-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
+}
+
+/* Agent Instructions Section */
+.agent-instructions {
+  background: rgba(220, 38, 38, 0.15);
+  border: 2px solid #dc2626;
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.instructions-label {
+  color: #fca5a5;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 15px 0;
+}
+
+.agent-message {
+  color: #ffffff;
+  font-size: 18px;
+  line-height: 1.6;
+  font-weight: 500;
+  margin: 0;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #dc2626;
+}
+
+/* Summary Section */
+.summary-section {
+  margin-bottom: 25px;
+  text-align: left;
+}
+
+.summary-toggle {
+  background: rgba(249, 115, 22, 0.2);
+  border: 1px solid #f97316;
+  color: #fed7aa;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  width: 100%;
+  text-align: left;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.summary-toggle:hover {
+  background: rgba(249, 115, 22, 0.3);
+  border-color: #fb923c;
+}
+
+.summary-content {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #f97316;
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 10px;
+  color: #fed7aa;
+  font-size: 14px;
+  line-height: 1.5;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Dismiss Button */
+.panic-button-dismiss {
+  background: linear-gradient(135deg, #374151, #1f2937);
+  color: white;
+  border: 2px solid #6b7280;
+  border-radius: 10px;
+  padding: 15px 30px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  width: 100%;
+}
+
+.panic-button-dismiss:hover {
+  background: linear-gradient(135deg, #1f2937, #111827);
+  border-color: #9ca3af;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.panic-button-dismiss:active {
+  transform: translateY(0);
+}
+
+/* Emergency Fallback */
+.emergency-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Responsive Updates for New Styles */
+@media (max-width: 768px) {
+  .emergency-title {
+    font-size: 20px;
+  }
+  
+  .agent-message {
+    font-size: 16px;
+  }
+  
+  .agent-instructions {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .panic-button-wrapper {
+    max-width: 90vw;
+  }
+  
+  .emergency-title {
+    font-size: 16px;
+    letter-spacing: 1px;
+  }
+  
+  .agent-message {
+    font-size: 14px;
+    padding: 12px;
+  }
+  
+  .agent-instructions {
+    padding: 15px;
+  }
+  
+  .summary-content {
+    font-size: 13px;
+    padding: 12px;
+  }
+}

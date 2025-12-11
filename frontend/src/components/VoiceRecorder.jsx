@@ -6,7 +6,7 @@ import './VoiceRecorder.css';
  * Minimalistyczny komponent - tylko przycisk mikrofonu
  * Transkrypcja wyświetla się na głównym ekranie (App.jsx)
  */
-export function VoiceRecorder({ onTranscriptUpdate, onAnalysisUpdate }) {
+export function VoiceRecorder({ onTranscriptUpdate, onAnalysisUpdate, aircraftCallsign }) {
   const {
     isListening,
     error,
@@ -14,7 +14,7 @@ export function VoiceRecorder({ onTranscriptUpdate, onAnalysisUpdate }) {
     committedTranscripts,
     fullTranscript,
     toggleListening,
-  } = useRealtimeVoice(onAnalysisUpdate);
+  } = useRealtimeVoice(onAnalysisUpdate, aircraftCallsign);
 
   // Update transcript w App.jsx przy każdej zmianie
   useEffect(() => {

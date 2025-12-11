@@ -15,7 +15,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
  * - Real-time transkrypcję (partial i committed)
  * - Periodic Claude analysis (co 2s)
  */
-export function useRealtimeVoice(onAnalysisUpdate) {
+export function useRealtimeVoice(onAnalysisUpdate, aircraftCallsign) {
   const [isManualMicActive, setIsManualMicActive] = useState(false);
   const [error, setError] = useState(null);
   
@@ -32,7 +32,18 @@ export function useRealtimeVoice(onAnalysisUpdate) {
   const fullTranscriptRef = useRef('');
 
   /**
-   * Periodic analysis - wywołuje Claude co 2 sekundy
+   * Stop periodic analysis
+   */
+  const stopPeriodicAnalysis = useCallback(() => {
+    if (analysisIntervalRef.current) {
+      clearInterval(analysisIntervalRef.current);
+      analysisIntervalRef.current = null;
+      console.log('⏱️ [Analysis] Stopped periodic analysis');
+    }
+  }, []);
+
+  /**
+   * Periodic analysis - wywołuje Pilots Advisor co 2 sekundy
    */
   const analyzeTranscript = useCallback(async (text) => {
     if (!text || text.length < 10) return;
@@ -41,29 +52,50 @@ export function useRealtimeVoice(onAnalysisUpdate) {
     if (text === lastAnalyzedTextRef.current) return;
     
     try {
-      console.log('🤖 [Analysis] Analyzing:', text.slice(0, 50) + '...');
+      console.log('✈️ [Pilots Advisor] Analyzing:', text.slice(0, 50) + '...');
+      console.log('✈️ [Pilots Advisor] Aircraft:', aircraftCallsign || 'Not specified');
       
-      const response = await fetch(`${API_URL}/api/voice/analyze`, {
+      const response = await fetch(`${API_URL}/api/voice/check-cockpit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ transcript: text })
+        body: JSON.stringify({ 
+          transcript: text,
+          aircraft_callsign: aircraftCallsign || null
+        })
       });
       
       const data = await response.json();
       
       if (data.success && onAnalysisUpdate) {
-        console.log('✅ [Analysis] Result:', data.language);
-        onAnalysisUpdate({
-          language: data.language,
-          confidence: data.confidence
-        });
+        if (data.needs_intervention) {
+          console.log('🚨 [Pilots Advisor] INTERVENTION NEEDED - STOPPING ANALYSIS');
+          console.log('📋 Summary:', data.summary?.slice(0, 100) + '...');
+          console.log('📢 Agent Message:', data.agent_message?.slice(0, 100) + '...');
+          
+          // STOP periodic analysis immediately
+          stopPeriodicAnalysis();
+          
+          // Pass emergency data to parent
+          onAnalysisUpdate({
+            needsIntervention: true,
+            summary: data.summary,
+            agentMessage: data.agent_message,
+            timestamp: Date.now()
+          });
+        } else {
+          console.log('✈️ [Pilots Advisor] Result: All good');
+          onAnalysisUpdate({
+            needsIntervention: false,
+            timestamp: Date.now()
+          });
+        }
         lastAnalyzedTextRef.current = text;
       }
       
     } catch (err) {
-      console.error('❌ [Analysis] Error:', err);
+      console.error('❌ [Pilots Advisor] Error:', err);
     }
-  }, [onAnalysisUpdate]);
+  }, [onAnalysisUpdate, stopPeriodicAnalysis, aircraftCallsign]);
 
   /**
    * Start periodic analysis (co 2 sekundy)
@@ -84,23 +116,12 @@ export function useRealtimeVoice(onAnalysisUpdate) {
   }, [analyzeTranscript]);
 
   /**
-   * Stop periodic analysis
-   */
-  const stopPeriodicAnalysis = useCallback(() => {
-    if (analysisIntervalRef.current) {
-      clearInterval(analysisIntervalRef.current);
-      analysisIntervalRef.current = null;
-      console.log('⏱️ [Analysis] Stopped periodic analysis');
-    }
-  }, []);
-
-  /**
    * useScribe - hook z ElevenLabs SDK
    * Łączymy się BEZ wbudowanego mikrofonu (Firefox bug workaround)
    */
   const scribe = useScribe({
     modelId: 'scribe_v2_realtime',
-    languageCode: 'pl',
+    languageCode: 'en',
     
     onPartialTranscript: (data) => {
       console.log('📝 [Scribe] Partial:', data.text);

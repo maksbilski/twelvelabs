@@ -1,0 +1,3 @@
+Dopisz do aktualnego kodu, że jeżeli zostanie wykryta sytuacja zagrożenia katastrofą, to żeby poszedł drugi call do API Gemini, żeby wygenreować podsumowanie tego co się stało i instrukcję, którą ma agent konwersacyjny wypowiedzieć do pilotów będących w kokpicie, żeby szybko opisać co się stało. to podsumowanie ma być wysłane do frontendu razem z informacją o tym że występuje jakieś zagrożenie. 
+
+Dopiero jak sie skonczy ten drugi call to wyswietl przycisk panic button na ekranie i zebysmy mogli zobaczyc jakie sugestie wygenerowales to wyswietl na ekranie instrukcje dla agenta
