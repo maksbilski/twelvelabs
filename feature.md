@@ -1,0 +1,1 @@
+Siema, podsyłam Ci repo z poprzedniego hackathonu. Tam jest taki fajny feature, że mam realtime transkrypcję z frontendu na backend i oprócz tego llm antrophica ktory co 2 sekundy proboje atakowac

@@ -1,38 +1,66 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import './App.css'
+import { VoiceRecorder } from './components/VoiceRecorder'
 
 function App() {
-  const [message, setMessage] = useState('Ładowanie...')
-  const [loading, setLoading] = useState(true)
+  const [transcript, setTranscript] = useState('')
+  const [analysis, setAnalysis] = useState(null)
 
-  useEffect(() => {
-    // Wywołanie API backendu
-    fetch('http://localhost:8000/api/hello')
-      .then(response => response.json())
-      .then(data => {
-        setMessage(data.message)
-        setLoading(false)
-      })
-      .catch(error => {
-        setMessage('Błąd połączenia z backendem')
-        setLoading(false)
-        console.error('Error:', error)
-      })
-  }, [])
+  const handleTranscriptUpdate = (newTranscript) => {
+    setTranscript(newTranscript)
+  }
+
+  const handleAnalysisUpdate = (newAnalysis) => {
+    setAnalysis(newAnalysis)
+  }
 
   return (
     <div className="App">
-      <h1>TwelveLabs</h1>
-      <div className="card">
-        {loading ? (
-          <p>Ładowanie...</p>
-        ) : (
-          <p>{message}</p>
-        )}
+      {/* Główny ekran z transkrypcją */}
+      <div className="transcript-screen">
+        <div className="transcript-header">
+          <h1>🎤 Real-time Voice Transcription</h1>
+          <p className="hint">Kliknij mikrofon i zacznij mówić...</p>
+        </div>
+        
+        <div className="transcript-content">
+          {transcript ? (
+            <p className="transcript-text">{transcript}</p>
+          ) : (
+            <p className="transcript-placeholder">
+              Transkrypcja pojawi się tutaj...
+            </p>
+          )}
+        </div>
       </div>
-      <p className="info">
-        Frontend: React + Vite | Backend: FastAPI
-      </p>
+
+      {/* Panel z analizą AI (język) */}
+      {analysis && (
+        <div className="analysis-panel">
+          <div className="analysis-header">
+            <span className="analysis-icon">🤖</span>
+            <span className="analysis-title">AI Analysis</span>
+          </div>
+          <div className="analysis-content">
+            <div className="analysis-item">
+              <span className="analysis-label">Wykryty język:</span>
+              <span className="analysis-value">{analysis.language}</span>
+            </div>
+            {analysis.confidence && (
+              <div className="analysis-item">
+                <span className="analysis-label">Pewność:</span>
+                <span className="analysis-value">{analysis.confidence}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      
+      {/* Voice Recorder - pływający przycisk */}
+      <VoiceRecorder 
+        onTranscriptUpdate={handleTranscriptUpdate}
+        onAnalysisUpdate={handleAnalysisUpdate}
+      />
     </div>
   )
 }
